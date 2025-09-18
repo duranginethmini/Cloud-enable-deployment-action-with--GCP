@@ -93,6 +93,7 @@ Run your Spring Boot app. It will connect to your Cloud SQL database.
 
 bash
 
+https://github.com/duranginethmini/Cloud-enable-deployment-action-with--GCP
 
 
 2. Update application-gcp.properties with your database credentials if needed.
