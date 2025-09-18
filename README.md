@@ -1,52 +1,118 @@
-# Cloud Enabled Deployment In Action with AWS
+# Cloud Deployment with GCP - assignment
 
-This repository contains four projects:
+## 📌 Overview
+This repository contains my practical assignment submission for [Enterprise Cloud Architecture]. It demonstrates how to set up a Spring Boot application connected to a MySQL database hosted on Google Cloud SQL.
 
-- course-service (Spring Boot + MySQL)
-- student-service (Spring Boot + MongoDB)
-- media-service (Spring Boot + Local file storage, can be extended to S3/MinIO)
-- frontend-app (React + TypeScript)
+---
+## 📹 Demo Video
 
-## Backend Services
+### Watch the demo here:
+> ⚡ Tip: Download the video for full HD quality if streaming appears blurry.
 
-### 1. course-service
-- Entity: Course(id, name, duration)
-- Endpoints:
-  - GET /courses
-  - GET /courses/{id}
-  - POST /courses
-  - DELETE /courses/{id}
-- Default port: 8081
-- Configure MySQL settings
+---
 
-### 2. student-service
-- Document: Student(registrationNumber, fullName, address, contact, email)
-- Endpoints:
-  - GET /students
-  - GET /students/{id}
-  - POST /students
-  - DELETE /students/{id}
-- Default port: 8082
-- Configure MongoDB settings
+## 🛠️ How to Set Up MySQL Database in Google Cloud
 
-### 3. media-service
-- Resource: files
-- Endpoints:
-  - POST /files (multipart/form-data: file)
-  - GET /files (list)
-  - GET /files/{id} (fetch)
-  - DELETE /files/{id} (delete)
-- Default port: 8083
-- Uses local disk storage at `./data/media` by default (override with env var `MEDIA_STORAGE_DIR`).
+### Step 1: Open Google Cloud Console
+* Go to: [https://console.cloud.google.com/sql](https://console.cloud.google.com/sql)
+* Make sure you’re in the right project.
 
-## Frontend (frontend-app)
-- React + TypeScript + MUI + Axios + Vite app with 3 sections: Courses, Students, Media
-- Scripts:
-  - npm run dev (Vite dev server)
-  - npm run build (TypeScript build + Vite build)
-  - npm run preview (Preview built app)
+---
 
-## Build
+### Step 2: Create Cloud SQL Instance
+1. Click *Create Instance* → choose *MySQL*.
+2. Choose *MySQL 8.0* (recommended).
+3. Give it an *Instance ID* (e.g., mysqldb).
+4. Set the *root password* (e.g., Mysql-ECA1!).
+5. Region: pick *us-central1* (or closest to you).
+6. Availability: for testing, choose *Single zone*.
 
-- Backend: run `mvn -q -e -DskipTests package` at repo root to build services.
-- Frontend: run `npm install` then `npm run dev` inside `frontend-app`.
+---
+
+### Step 3: Enable Public IP for Testing
+1. Go to your instance → *Connections* tab.
+2. Under *Public IP, click **Add network*.
+3. Name it local-testing.
+4. For IP range, type 0.0.0.0/0 (⚠️ only for testing).
+5. Save and copy the *Public IP* (e.g., 34.135.121.174).
+
+---
+
+### Step 4: Create the Database Inside the Instance
+1. Open Cloud Shell or your terminal and connect:
+
+bash
+mysql -h <PUBLIC_IP> -P 3306 -u root -p
+`
+
+Example:
+
+bash
+mysql -h 34.135.121.174 -P 3306 -u root -p
+
+
+Enter your password (Mysql-ECA1!).
+
+2. Inside MySQL shell, run:
+
+sql
+CREATE DATABASE mysqldb;
+
+
+3. Confirm creation:
+
+sql
+SHOW DATABASES;
+
+
+You should see mysqldb.
+
+---
+
+### Step 5: Connect Spring Boot Application
+
+In application-gcp.properties:
+
+properties
+spring.datasource.url=jdbc:mysql://34.135.121.174:3306/mysqldb?useSSL=false&allowPublicKeyRetrieval=true
+spring.datasource.username=root
+spring.datasource.password=Mysql-ECA1!
+spring.jpa.hibernate.ddl-auto=update
+spring.jpa.show-sql=true
+
+server.port=8081
+
+
+Run your Spring Boot app. It will connect to your Cloud SQL database.
+
+---
+
+## 📂 Usage
+
+1. Clone the repository:
+
+bash
+
+
+
+2. Update application-gcp.properties with your database credentials if needed.
+
+3. Run the Spring Boot application:
+
+bash
+./mvnw spring-boot:run
+
+
+4. Access the app at http://localhost:8081.
+
+> ⚡ Note: The Cloud SQL instance used for this assignment is currently *stopped* to save free tier credits.  
+> To run the application locally or demo the project, start the instance from the Google Cloud Console. All database data remains intact.
+
+
+---
+
+## 🔖 License
+
+This project is open-source under the [MIT License](LICENSE).
+
+---
