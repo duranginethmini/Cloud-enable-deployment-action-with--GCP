@@ -1,3 +1,7 @@
+### *Name:* Durangi Nethmini 
+### *Student ID:* 2301682052
+### *Email:* durangineth02@gmail.com
+
 # Cloud Deployment with GCP - assignment
 
 ## 📌 Overview
